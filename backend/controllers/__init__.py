@@ -1,6 +1,7 @@
 import asyncio
 
-from backend.utils.exceptions import ConflictError
+from backend.utils.exceptions import (
+    ConflictError, BadParametersError, ResourceNotFoundError)
 
 
 class ControllerBase(object):
@@ -14,7 +15,7 @@ class ControllerBase(object):
     @asyncio.coroutine
     def list(cls, uuid=None):
         """
-        get all data or get by uuid if it is not None
+        get all data or get by uuid if "uuid" it is not None
         """
         if uuid is None or uuid == "":
             # get all data
@@ -44,12 +45,14 @@ class ControllerBase(object):
             for key in kwargs.keys()
             if key in cls.primary_keys
         }
+
         result = yield from cls.search(**filter_by)
 
-        if result == []:
-            print("Object already exist in database")
+        if result != []:
             raise ConflictError(
-                "Object already exist in database"
+                "Object already exist in database, primary kyes : {}".format(
+                    cls.primary_keys
+                )
             )
 
     @classmethod
@@ -78,6 +81,7 @@ class ControllerBase(object):
         """
 
         obj = cls.model(**kwargs)
+
         kwargs["uuid"] = str(obj.uuid)
 
         if asyncio.iscoroutinefunction(cls.pre_create) is True:
@@ -85,10 +89,9 @@ class ControllerBase(object):
         else:
             kwargs = cls.pre_create(**kwargs)
 
-        # TODO
         # checking the primary keys if they are exist
         # raise ConflictError if object is already exist
-        # yield from cls.check_if_exist(kwargs)
+        yield from cls.check_if_exist(**kwargs)
 
         yield from obj.save()
 
@@ -170,20 +173,28 @@ class ControllerBase(object):
         """
         delete object from database by uuid
         """
+
+        if uuid is None or uuid is "":
+            raise BadParametersError("uuid is None")
+
         objs = yield from cls.list(uuid)
+        if len(objs) == []:
+            raise ResourceNotFoundError(
+                "No Resouce found with uuid {}".format(
+                    uuid))
         obj = objs[0]
 
         if asyncio.iscoroutinefunction(cls.pre_delete) is True:
-            kwargs = yield from cls.pre_delete(uuid)
+            yield from cls.pre_delete(uuid)
         else:
-            kwargs = cls.pre_delete(uuid)
+            cls.pre_delete(uuid)
 
         yield from obj.delete()
 
         if asyncio.iscoroutinefunction(cls.post_delete) is True:
-            kwargs = yield from cls.post_delete(uuid)
+            yield from cls.post_delete(uuid)
         else:
-            kwargs = cls.post_delete(uuid)
+            cls.post_delete(uuid)
 
         return obj
 

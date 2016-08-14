@@ -1,5 +1,5 @@
-from backend.views import ViewBase
 from backend.controllers.channel import ChannelController
+from backend.views import ViewBase
 
 
 class ChannelView(ViewBase):

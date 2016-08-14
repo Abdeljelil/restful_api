@@ -1,4 +1,5 @@
 from aiomotorengine import Document
+from backend.settings import LOG
 
 
 class BaseModel(Document):

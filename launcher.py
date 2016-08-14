@@ -1,7 +1,6 @@
-from backend.server import main
-
 import sys
 
+from backend.server import main
 
 if __name__ == '__main__':
 

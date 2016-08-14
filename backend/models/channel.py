@@ -1,7 +1,8 @@
-from backend.models import BaseModel
-from aiomotorengine import UUIDField, StringField
-
 from uuid import uuid1
+
+from aiomotorengine import IntField, StringField, UUIDField
+
+from backend.models import BaseModel
 
 
 class ChannelModel(BaseModel):
@@ -10,6 +11,7 @@ class ChannelModel(BaseModel):
 
     uuid = UUIDField(default=uuid1(), required=True)
     name = StringField(required=True)
+    index = IntField()
 
     def to_dict(self):
         """
@@ -17,6 +19,7 @@ class ChannelModel(BaseModel):
         """
         r = dict(
             name=self.name,
-            uuid=str(self.uuid)
+            uuid=str(self.uuid),
+            index=self.index
         )
         return r

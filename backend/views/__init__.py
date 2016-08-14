@@ -2,9 +2,6 @@ from tornado.web import RequestHandler
 from tornado import gen
 from tornado.escape import json_decode
 
-import asyncio
-import tornado
-
 from backend.utils.decorators import view_wrapper
 
 
@@ -44,7 +41,7 @@ class ViewBase(RequestHandler):
             data = json_decode(self.request.body)
 
             objects = []
-            for uuid, values in data.iteritems():
+            for uuid, values in data.items():
                 obj = yield from self.controller.update(uuid, **values)
                 objects.append(obj)
 
