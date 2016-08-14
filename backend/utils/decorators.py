@@ -60,7 +60,7 @@ def debug(exception, method, args, kwargs):
         body=exception.body
     )
 
-    ############# PRINT ERROR IN THE LOG FILE ##############
+    # PRINT ERROR IN THE LOG FILE
     LOG.error("*" * 30 + " ERROR " + "*" * 30)
     LOG.error("Exception : " + str(exception.name))
     LOG.error("Type : " + str(exception.type_))
@@ -71,7 +71,7 @@ def debug(exception, method, args, kwargs):
     LOG.error("body : " + str(exception.body))
 
     traceback_str = ""
-    if exception.traceback != None:
+    if exception.traceback is not None:
         for line in exception.traceback:
             if line.replace(" ", "") != "" and line != "\n":
                 traceback_str = traceback_str + "\n" + line

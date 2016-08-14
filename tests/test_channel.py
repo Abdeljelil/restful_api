@@ -1,7 +1,8 @@
-from .base import BaseTestCase, BaseFakeModel
+import json
 
 from backend.models.channel import ChannelModel
-import json
+
+from .base import BaseFakeModel, BaseTestCase
 
 
 class FakeChannelModel(BaseFakeModel):
@@ -74,7 +75,17 @@ class TestChannel(BaseTestCase):
         assert status == 200
         assert self.uuid in content
 
-    def test_05_update(self):
+    def test_05_search(self):
+        query = {"name": "unitest_channel"}
+        url = self.make_url("/channel/search")
+        content, status = self.send_request(
+            "POST", url,
+            data=json.dumps(query)
+        )
+        assert status == 200
+        assert self.uuid in content
+
+    def test_06_update(self):
 
         data = {
             "name": "unittest_channel_update"
@@ -89,7 +100,7 @@ class TestChannel(BaseTestCase):
         assert self.uuid in content
         assert content[self.uuid]["name"] == data["name"]
 
-    def test_09_delete(self):
+    def test_07_delete(self):
 
         url = self.make_url("/channel/{}".format(self.uuid))
 

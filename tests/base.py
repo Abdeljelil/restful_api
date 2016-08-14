@@ -1,17 +1,15 @@
-import unittest
-
-import logging
 import asyncio
-
-import requests
+import logging
+import threading
+import time
+import unittest
 from urllib.parse import urljoin
 
+import requests
+
+from backend import settings
 from backend.server import main
 
-import threading
-from backend import settings
-
-import time
 TEST_API_PORT = 9900
 REQUEST_TIME_OUT = 5
 
