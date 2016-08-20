@@ -1,31 +1,23 @@
 import json
 
-from backend.models.channel import ChannelModel
-
-from .base import BaseFakeModel, BaseTestCase
+from .base import BaseTestCase
 
 
-class FakeChannelModel(BaseFakeModel):
-
-    metaclass = ChannelModel
-
-    fakedatadict = {}
-
-
-class TestChannel(BaseTestCase):
+class TestUserGroup(BaseTestCase):
 
     uuid = "00000000-0000-0000-0000-000000000001"
+    base_url = "/user_group"
 
     def test_00_get_all(self):
 
-        url = self.make_url("/channel")
+        url = self.make_url(self.base_url)
         content, status = self.send_request("GET", url)
-
+        print(len(content))
         assert status == 200
 
     def test_01_get_no_exist(self):
 
-        url = self.make_url("/channel/{}".format(self.uuid))
+        url = self.make_url("{}/{}".format(self.base_url, self.uuid))
 
         content, status = self.send_request("GET", url)
 
@@ -36,14 +28,11 @@ class TestChannel(BaseTestCase):
 
         data = {
             "uuid": self.uuid,
-            "name": "unitest_channel",
-            "index": 15,
+            "name": "unittest"
         }
 
-        url = self.make_url("/channel")
-
         content, status = self.send_request(
-            "PUT", url,
+            "PUT", self.base_url,
             data=json.dumps(data)
         )
 
@@ -54,14 +43,11 @@ class TestChannel(BaseTestCase):
 
         data = {
             "uuid": self.uuid,
-            "name": "unitest_channel",
-            "index": 15,
+            "name": "unittest"
         }
 
-        url = self.make_url("/channel")
-
         content, status = self.send_request(
-            "PUT", url,
+            "PUT", self.base_url,
             data=json.dumps(data)
         )
 
@@ -69,15 +55,15 @@ class TestChannel(BaseTestCase):
 
     def test_04_get_one(self):
 
-        url = self.make_url("/channel/{}".format(self.uuid))
+        url = "{}/{}".format(self.base_url, self.uuid)
         content, status = self.send_request("GET", url)
 
         assert status == 200
         assert self.uuid in content
 
     def test_05_search(self):
-        query = {"name": "unitest_channel"}
-        url = self.make_url("/channel/search")
+        query = {"name": "unittest"}
+        url = "{}/search".format(self.base_url)
         content, status = self.send_request(
             "POST", url,
             data=json.dumps(query)
@@ -88,13 +74,11 @@ class TestChannel(BaseTestCase):
     def test_06_update(self):
 
         data = {
-            "name": "unittest_channel_update"
+            "name": "unittest_update"
         }
 
-        url = self.make_url("/channel")
-
         content, status = self.send_request(
-            "POST", url, data=json.dumps({self.uuid: data}))
+            "POST", self.base_url, data=json.dumps({self.uuid: data}))
 
         assert status == 200
         assert self.uuid in content
@@ -102,7 +86,7 @@ class TestChannel(BaseTestCase):
 
     def test_07_delete(self):
 
-        url = self.make_url("/channel/{}".format(self.uuid))
+        url = "{}/{}".format(self.base_url, self.uuid)
 
         content, status = self.send_request(
             "DELETE", url

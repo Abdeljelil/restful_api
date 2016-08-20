@@ -1,57 +1,53 @@
-import asyncio
-
 import tornado.web
 import aiomotorengine
 from tornado.platform.asyncio import AsyncIOMainLoop
 
 from backend import settings
-from backend.views.channel import ChannelView
+from backend.views.user import UserView
+from backend.views.user_group import UserGroupView
+from tornado.options import define, options
+
+define("port", default="8888", help="Server port")
+define("bind", default="127.0.0.1", help="Bind ip address")
+
 
 entry_points = [
-    (r"/channel(.*)", ChannelView),
+    (r"/user_group(.*)", UserGroupView),
+    (r"/user(.*)", UserView),
+
 ]
 
 
-def main(port=8888, ioloop=None):
-    """
-    main function of the server
-    only one parameter is required
-    port : port number of the service
-    """
-    print("in main with port {}".format(port))
+def main():
 
-    # start event loop required if we'll run serve /
-    # in thread like the example in unittest
-    if ioloop is None:
-        ioloop = asyncio.new_event_loop()
+    print("in main with port {}".format(options.port))
 
-    asyncio.set_event_loop(ioloop)
+    tonado_ioloop = AsyncIOMainLoop()
 
-    AsyncIOMainLoop().install()
+    tonado_ioloop.install()
 
-    # creation of tornado app should be after /
-    # the create of ioloop of asyncio
+    # creation tornado app should be after /
+    # create ioloop of asyncio
     app = tornado.web.Application(
         entry_points,
         debug=True,
-        autoreload=True,
-        serve_traceback=True
+        # autoreload=True,
+        # serve_traceback=True
     )
 
     aiomotorengine.connect(
         settings.MONGO_DB_NAME,
-        io_loop=ioloop,
+        io_loop=tonado_ioloop.asyncio_loop,
         **settings.MONGO_KW
     )
 
     settings.LOG.info(
-        "Tornado server has been started on port {}".format(port)
+        "Tornado server has been started on port {}".format(options.port)
     )
-    app.listen(port)
-
-    ioloop.run_forever()
+    app.listen(options.port, address=options.bind)
+    tonado_ioloop.start()
 
 
 if __name__ == '__main__':
 
-    main(8888)
+    main()

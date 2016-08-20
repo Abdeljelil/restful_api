@@ -1,6 +1,5 @@
 import sys
 import traceback
-from uuid import uuid1
 
 from tornado import gen
 from tornado.escape import json_encode
@@ -12,8 +11,7 @@ from backend.utils.exceptions import UnknownError
 def view_wrapper(func):
     @gen.coroutine
     def r_view_wrapper(self, *args, **kwargs):
-        rid = uuid1()
-        LOG.info('(+) start new request {}'.format(rid))
+
         response = None
         status = 200
         try:
@@ -29,7 +27,6 @@ def view_wrapper(func):
         else:
             self.write(json_encode(response))
 
-        LOG.info('(-) finsh request {}'.format(rid))
         self.finish()
 
     return r_view_wrapper

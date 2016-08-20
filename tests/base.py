@@ -1,68 +1,59 @@
-import asyncio
 import logging
-import threading
-import time
-import unittest
-from urllib.parse import urljoin
+import json
 
-import requests
-
+import tornado.web
 from backend import settings
-from backend.server import main
+from backend.server import entry_points
+from tornado.testing import AsyncHTTPTestCase
 
-TEST_API_PORT = 9900
+import aiomotorengine
 REQUEST_TIME_OUT = 5
 
 logging.basicConfig(level=logging.CRITICAL)
 
-settings.LOG.setLevel(logging.CRITICAL)
+# settings.LOG.setLevel(logging.CRITICAL)
 
 
-class BaseTestCase(unittest.TestCase):
+class BaseTestCase(AsyncHTTPTestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.start_server()
+    def get_new_ioloop(self):
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.stop_server()
+        io_loop = tornado.platform.asyncio.AsyncIOMainLoop()
 
-    @classmethod
-    def start_server(cls):
+        return io_loop
 
-        cls.ioloop = asyncio.new_event_loop()
-        cls.thread = threading.Thread(
-            target=main,
-            args=(TEST_API_PORT, cls.ioloop, )
+    def setUp(self):
+
+        super(BaseTestCase, self).setUp()
+
+        aiomotorengine.connect(
+            settings.MONGO_DB_NAME,
+            io_loop=self.io_loop.asyncio_loop,
+            **settings.MONGO_KW
         )
 
-        cls.thread.start()
+    def get_app(self):
 
-        # make sure that the server is stated
-        time.sleep(0.5)
+        app = tornado.web.Application(
+            entry_points,
 
-    @classmethod
-    def stop_server(cls):
+        )
 
-        cls.ioloop.stop()
+        return app
 
-    def make_url(self, route):
-
-        base = "http://localhost:{}".format(TEST_API_PORT)
-
-        return urljoin(base, route, allow_fragments=True)
+    def make_url(self, url):
+        return url
 
     def send_request(self, *args, **kwargs):
 
-        if "timeout" in kwargs:
-            kwargs["timeout"] = REQUEST_TIME_OUT
-        resonpse = requests.request(*args, **kwargs)
-        return resonpse.json(), resonpse.status_code
+        response = self.fetch(
+            args[1],
+            method=args[0],
+            body=kwargs.get("data", None),
+            follow_redirects=False,
+            request_timeout=REQUEST_TIME_OUT
+        )
 
-
-class BaseFakeModel(object):
-
-    metaclass = None
-
-    fakedatadict = {}
+        decode_response = response.body.decode("utf-8")
+        json_response = json.loads(decode_response)
+        return json_response, response.code
