@@ -10,14 +10,13 @@ class TestUserGroup(BaseTestCase):
 
     def test_00_get_all(self):
 
-        url = self.make_url(self.base_url)
-        content, status = self.send_request("GET", url)
+        content, status = self.send_request("GET", self.base_url)
         print(len(content))
         assert status == 200
 
     def test_01_get_no_exist(self):
 
-        url = self.make_url("{}/{}".format(self.base_url, self.uuid))
+        url = "{}/{}".format(self.base_url, self.uuid)
 
         content, status = self.send_request("GET", url)
 

@@ -11,7 +11,7 @@ REQUEST_TIME_OUT = 5
 
 logging.basicConfig(level=logging.CRITICAL)
 
-# settings.LOG.setLevel(logging.CRITICAL)
+settings.LOG.setLevel(logging.CRITICAL)
 
 
 class BaseTestCase(AsyncHTTPTestCase):
@@ -40,9 +40,6 @@ class BaseTestCase(AsyncHTTPTestCase):
         )
 
         return app
-
-    def make_url(self, url):
-        return url
 
     def send_request(self, *args, **kwargs):
 
