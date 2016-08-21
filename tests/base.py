@@ -1,12 +1,13 @@
-import logging
 import json
-
-import tornado.web
-from backend import settings
-from backend.server import entry_points
-from tornado.testing import AsyncHTTPTestCase
+import logging
 
 import aiomotorengine
+import tornado.web
+from tornado.testing import AsyncHTTPTestCase
+
+from backend import settings
+from backend.server import entry_points
+
 REQUEST_TIME_OUT = 5
 
 logging.basicConfig(level=logging.CRITICAL)

@@ -1,7 +1,7 @@
 import asyncio
 
-from backend.utils.exceptions import (
-    ConflictError, BadParametersError, ResourceNotFoundError)
+from backend.utils.exceptions import (BadParametersError, ConflictError,
+                                      ResourceNotFoundError)
 
 
 class ControllerBase(object):
@@ -17,20 +17,16 @@ class ControllerBase(object):
         """
         get all data or get by uuid if "uuid" it is not None
         """
-
-        if uuid is None or uuid == "":
-            # get all data
-            try:
+        try:
+            if uuid is None or uuid == "":
+                # get all data
                 objects = yield from cls.model.objects.find_all()
-            except TypeError:
-                return []
-        else:
-            try:
+            else:
                 objects = yield from cls.model.objects.filter(
                     uuid=uuid
                 ).find_all()
-            except TypeError:
-                return []
+        except TypeError:
+            return []
 
         return objects
 

@@ -1,17 +1,21 @@
-export PYTHONASYNCIODEBUG=1
-export PYTHONWARNINGS=default
+# export PYTHONASYNCIODEBUG=1
+# export PYTHONWARNINGS=default
 
 test:
-	# python -m unittest
-	nosetests -vv
+	nosetests -vv \
+	--with-coverage \
+	--cover-package=backend \
+	--cover-erase \
+	--cover-min-percentage=85 \
+	--cover-html \
+	--cover-branches \
+	--cover-xml
 
-pylint:
-	pylint -f parseable backend/ --rcfile .pylint
+isort:
+	isort --check-only --recursive backend
 
-coverage:
-	python -m coverage erase
-	python -m coverage run --branch --source=backend -m unittest
-	python -m coverage html
+flake8:
+	flake8 backend/ --max-complexity=10  --count --max-line-length=80 --import-order-style=google
 
 install:
 	python setup.py install
@@ -27,4 +31,4 @@ publish:
 clean:
 	find . -name '*.pyc' -delete
 	find . -name __pycache__ -delete
-	rm -rf .coverage build compliance/reports dist docs/_build htmlcov MANIFEST nosetests.xml backend.egg-info .tox coverage.xml
+	rm -rf .coverage build cover compliance/reports dist docs/_build htmlcov MANIFEST nosetests.xml backend.egg-info .tox coverage.xml

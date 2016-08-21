@@ -1,11 +1,11 @@
 import sys
 import traceback
 
-from tornado import gen
-from tornado.escape import json_encode
-
 from backend.settings import LOG
 from backend.utils.exceptions import UnknownError
+
+from tornado import gen
+from tornado.escape import json_encode
 
 
 def view_wrapper(func):

@@ -22,12 +22,8 @@ setup(
     ],
     packages=find_packages(),
     include_package_data=True,
-    # install_requires=[
-    #     "tornado"
-    # ],
-    # dependency_links=[
-    #     "https://github.com/ilex/aiomotorengine/archive/master.zip"
-    # ],
+    install_requires=[],
+
     use_2to3=True,
     extras_require={
     },

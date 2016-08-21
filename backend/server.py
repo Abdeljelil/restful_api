@@ -1,11 +1,13 @@
-import tornado.web
 import aiomotorengine
-from tornado.platform.asyncio import AsyncIOMainLoop
 
 from backend import settings
 from backend.views.user import UserView
 from backend.views.user_group import UserGroupView
+
 from tornado.options import define, options
+from tornado.platform.asyncio import AsyncIOMainLoop
+import tornado.web
+
 
 define("port", default="8888", help="Server port")
 define("bind", default="127.0.0.1", help="Bind ip address")
@@ -27,7 +29,7 @@ def main():
     tonado_ioloop.install()
 
     # creation tornado app should be after /
-    # create ioloop of asyncio
+    # create ioloop install
     app = tornado.web.Application(
         entry_points,
         debug=True,

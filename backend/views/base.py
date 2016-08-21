@@ -1,8 +1,8 @@
-from tornado.web import RequestHandler
+from backend.utils.decorators import view_wrapper
+
 from tornado import gen
 from tornado.escape import json_decode
-
-from backend.utils.decorators import view_wrapper
+from tornado.web import RequestHandler
 
 
 class ViewBase(RequestHandler):

@@ -1,0 +1,6 @@
+nose
+coverage
+pep8-naming
+flake8
+flake8-import-order
+tox
